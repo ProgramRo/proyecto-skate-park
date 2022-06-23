@@ -5,63 +5,39 @@
     <h2>Registro</h2>
     <hr class="w-50" />
 
-    <form method="post" action="/registro" enctype="multipart/form-data">
+    <form method="post" action="/Registro" enctype="multipart/form-data">
       <div class="form-group row w-50 m-auto">
         <div class="form-group col-12 col-sm-6">
           <label>Email</label>
-          <input class="form-control m-auto" id="email" name="email" />
+          <input class="form-control m-auto" name="email" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Nombre</label>
-          <input class="form-control m-auto" id="nombre" name="nombre" />
+          <input class="form-control m-auto" name="nombre" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Password</label>
-          <input class="form-control m-auto" id="password" name="password" />
+          <input class="form-control m-auto" name="password" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Repita la password</label>
-          <input class="form-control m-auto" id="repPass"/>
+          <input class="form-control m-auto" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Años de experiencia</label>
-          <input class="form-control m-auto" id="aniosExp" name="anios_experiencia"/>
+          <input class="form-control m-auto" name="anosExperiencia" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Especialidad</label>
-          <input class="form-control m-auto" id="especialidad" name="especialidad" />
+          <input class="form-control m-auto" name="especialidad" />
         </div>
         <div class="form-group col-12 col-sm-12">
           <label>Foto de perfil</label>
-          <input type="file" id="foto" name="foto" />
+          <input type="file" name="foto" />
         </div>
       </div>
       <input type="submit" class="btn btn-info mb-3">Registrarme</input>
-      <p><a href="/login"> Iniciar sesión</a></p>
+      <p><a href="/Login"> Iniciar sesión</a></p>
     </form>
   </div>
   </body>
-
-  <script>
-  $('button').click(async () => {
-        const email = $('#email').val()
-        const nombre = $('#nombre').val()
-        const password = $('#password').val()
-        const anosExperiencia = $('#anos-experiencia').val()
-        const especialidad = $('#especialidad').val()
-        const foto = $('#foto').val()
-
-        const payload = { email, nombre, password, anosExperiencia, especialidad, foto }
-
-        try {
-            await axios.post('/skaters', payload)
-            alert('Skater registrado con éxito!')
-
-            window.location.href = '/login'
-        } catch ({ response }) {
-            const { data } = response
-            const { error } = data
-            alert(error)
-        }
-    })
-</script>

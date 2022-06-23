@@ -5,6 +5,7 @@ const expressFileUpload = require('express-fileupload')
 const bodyParser = require('body-parser')
 const jwt = require('jsonwebtoken')
 const path = require('path')
+const { registrarSkater } = require('./src/rutas/consultas')
 const secretKey = 'Shhhh'
 
 
@@ -60,22 +61,30 @@ app.get('/datos', (req, res) => {
     res.render('Datos')
 })
 
-/*
-// Ruta para registrar skater
+// Ruta para registrar nuevo participante
 app.post('/registro', async (req, res) => {
-    const { email, nombre, password, anosExperiencia, especialidad, foto } = req.body
+    const { email, nombre, password, anosExperiencia, especialidad } = req.body
+    const { foto } = req.files
+    const rutaImg = path.join(__dirname, 'assets', 'img', foto.name)
     try {
-        const skater = await registrarSkater(email, nombre, password, anosExperiencia, especialidad, foto)
-        console.log('Hola')
-        res.status(201).send(skater)
-    } catch (err) {
+        foto.mv(rutaImg, async (err) => {
+            if(err) {
+                return res.status(500).send({
+                    error: `Algo salió mal... ${err}`,
+                    code: 500
+                })
+            } else {
+                const data = await registrarSkater(email, nombre, password, anosExperiencia, especialidad, foto.name)
+                res.status(201).send(data)
+            }
+        })
+    } catch (e) {
         res.status(500).send({
-            error: `Algo salió mal... ${err}`,
+            error: `Algo salió mal... ${e}`,
             code: 500
         })
     }
 })
-*/
 
 // Se crea el servidor
 app.listen(3000, () => {

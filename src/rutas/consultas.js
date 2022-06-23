@@ -23,12 +23,12 @@ const consultarSkaters = async () => {
 const registrarSkater = async (email, nombre, password, anosExperiencia, especialidad, foto) => {
     const SQLQuery = {
         text: 'INSERT INTO skaters(email, nombre, password, anos_experiencia, especialidad, foto, estado) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-        values: [email, nombre, password, anosExperiencia, especialidad, foto],
+        values: [email, nombre, password, anosExperiencia, especialidad, foto, 0],
     }
+
     try {
         const result = await pool.query(SQLQuery)
-        console.log(result)
-        return result
+        return result.rows[0]
     } catch (error) {
         console.log(error)
         return error
