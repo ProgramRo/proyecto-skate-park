@@ -35,4 +35,19 @@ const registrarSkater = async (email, nombre, password, anosExperiencia, especia
     }
 }
 
-module.exports = { consultarSkaters, registrarSkater }
+const loginSkater = async (email, password) => {
+    const SQLQuery = {
+        text: 'SELECT * FROM skaters WHERE email=$1 AND password=$2',
+        values: [email, password]
+    }
+
+    try {
+        const result = await pool.query(SQLQuery)
+        return result.rows[0]
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+module.exports = { consultarSkaters, registrarSkater, loginSkater }

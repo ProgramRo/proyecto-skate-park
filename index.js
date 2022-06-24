@@ -5,7 +5,7 @@ const expressFileUpload = require('express-fileupload')
 const bodyParser = require('body-parser')
 const jwt = require('jsonwebtoken')
 const path = require('path')
-const { registrarSkater } = require('./src/rutas/consultas')
+const { consultarSkaters, registrarSkater, loginSkater } = require('./src/rutas/consultas')
 const secretKey = 'Shhhh'
 
 
@@ -37,8 +37,16 @@ app.engine(
 app.set('view engine', 'handlebars')
 
 // Ruta inicial
-app.get('/', (req, res) => {
-    res.render('mainLayout/index')
+app.get('/', async (req, res) => {
+    
+    try {
+        const skaters = await consultarSkaters()
+        res.render('mainLayout/index', {
+            datosSkaters: skaters
+        })
+    } catch (error) {
+        
+    }
 })
 
 // Ruta iniciar sesión
@@ -83,6 +91,28 @@ app.post('/registro', async (req, res) => {
             error: `Algo salió mal... ${e}`,
             code: 500
         })
+    }
+})
+
+// Ruta para hacer login
+app.post('/login', async (req, res) => {
+    res.render('Login')
+    try {
+        const datos = req.body
+        const skater = await loginSkater(datos.email, datos.password)
+
+        if (skater) {
+            const token = jwt.sign({
+                exp: Math.floor(Date.now()/1000) + 120,
+                data: skater
+            }, secretKey)
+            const id = skater.id
+            res.redirect(`/datos?token=${token}&id=${id}`)
+        } else {
+            
+        }
+    } catch (error) {
+        
     }
 })
 
