@@ -13,19 +13,23 @@
             <input
               class="form-control m-auto"
               disabled
-              value="tonyhawk@skate.com"
+              value="{{data.email}}"
+              name="email"
+              id="email"
             />
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Nombre</label>
-            <input class="form-control m-auto" value="Tony Hawk" />
+            <input class="form-control m-auto" value="{{data.nombre}}" name="nombre" id="nombre" />
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Password</label>
             <input
               type="password"
               class="form-control m-auto"
-              value="12345678"
+              value="{{data.password}}"
+              name="password"
+              id="password"
             />
           </div>
           <div class="form-group col-12 col-sm-6">
@@ -33,24 +37,109 @@
             <input
               type="password"
               class="form-control m-auto"
-              value="12345678"
+              value="{{data.password}}"
+              name="repitaPassword"
+              id="repitaPassword"
             />
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Años de experiencia</label>
-            <input class="form-control m-auto" value="12" />
+            <input class="form-control m-auto" value="{{data.anos_experiencia}}" name="anosExperiencia" id="anosExperiencia"/>
           </div>
           <div class="form-group col-12 col-sm-6">
             <label>Especialidad</label>
-            <input class="form-control m-auto" value="Kickflip" />
+            <input class="form-control m-auto" value="{{data.especialidad}}" name="especialidad" id="especialidad"/>
           </div>
         </div>
         <div class="mb-1">
-          <button class="btn btn-primary">Actualizar</button>
+          <button class="btn btn-primary" id="actualizar">Actualizar</button>
         </div>
         <div>
-          <button class="btn btn-danger">Eliminar cuenta</button>
+          <button class="btn btn-danger" id="eliminar-cuenta">Eliminar cuenta</button>
         </div>
       </form>
     </div>
   </body>
+
+<script>
+
+  const eventos = () => {
+    localStorage.setItem('token', '{{token}}') // aquí se almacena el token en el localstorage con la info del user
+
+    const botonActualizar = document.querySelector('#actualizar')
+    botonActualizar.addEventListener('click', async (event) => {
+      const nombre = document.querySelector('#nombre')
+      const password = document.querySelector('#password')
+      const repitaPassword = document.querySelector('#repitaPassword')
+      const especialidad = document.querySelector('#especialidad')
+      const anosExperiencia = document.querySelector('#anosExperiencia')
+
+      const data = {
+        'nombre': nombre.value,
+        'password': password.value,
+        'repitaPassword': repitaPassword.value,
+        'especialidad': especialidad.value,
+        'anosExperiencia': anosExperiencia.value
+        }
+
+      const tokenActual = localStorage.getItem('token')
+
+      await fetch('http://localhost:3000/update/{{data.id}}', {
+        method: 'PUT',
+        headers: {
+          'Authorization': tokenActual,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }).then(response => {
+        response.json().then(async (dato) => {
+          if(dato.status) {
+            alert('Actualización de datos correcta!')
+            window.location.replace(`/Datos?token=${dato.token}`)
+          } else {
+            alert(dato.message)
+            window.location.replace(`/Datos?token=${tokenActual}`)
+          }
+        })
+      }).catch((err) => {
+        alert(`Ocurrió un error. Por favor, revise la siguiente información: ${err}`)
+        window.location.replace(`/Datos?token=${tokenActual}`)
+      })
+    })
+
+    const botonEliminar = document.querySelector('#eliminar-cuenta')
+    botonEliminar.addEventListener('click', async (event) => {
+
+      const tokenActual = localStorage.getItem('token')
+
+      await fetch('http://localhost:3000/delete/{{data.id}}', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': tokenActual
+        }
+      }).then(response => {
+        response.json().then(async (dato) => {
+          if(dato.status) {
+            alert('Cuenta eliminada con éxito!')
+            localStorage.removeItem('token')
+            window.location.replace(`/`)
+          } else {
+            alert('Error al eliminar la cuenta. Intente nuevamente.')
+            window.location.replace(`/Datos?token=${tokenActual}`)
+          }
+        })
+      }).catch((err) => {
+        alert(`Ocurrió un error. Por favor, revise la siguiente información: ${err}`)
+        window.location.replace(`/Datos?token=${tokenActual}`)
+      })
+    })
+
+    if('{{mensaje}}') {
+      alert('{{mensaje}}')
+    }
+  }
+
+  eventos()
+
+
+</script>

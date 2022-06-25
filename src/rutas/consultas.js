@@ -50,4 +50,49 @@ const loginSkater = async (email, password) => {
     }
 }
 
-module.exports = { consultarSkaters, registrarSkater, loginSkater }
+const updateSkater = async (newData, id) => {
+    const SQLQuery = {
+        text: 'UPDATE skaters set nombre=$1, password=$2, anos_experiencia=$3, especialidad=$4 WHERE id=$5 RETURNING *',
+        values: [newData.nombre, newData.password, newData.anosExperiencia, newData.especialidad, id]
+    }
+
+    try {
+        const result = await pool.query(SQLQuery)
+        return result.rows[0]
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+const deleteSkater = async (id) => {
+    const SQLQuery = {
+        text: 'DELETE FROM skaters WHERE id=$1',
+        values: [id]
+    }
+
+    try {
+        const result = await pool.query(SQLQuery)
+        return result.rowCount
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+const updateCheckbox = async (body) => {
+    const SQLQuery = {
+        text: 'UPDATE skaters set estado=$1 WHERE id=$2 RETURNING *',
+        values: [body.estado, body.id]
+    }
+
+    try {
+        const result = await pool.query(SQLQuery)
+        return result.rows[0]
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+module.exports = { consultarSkaters, registrarSkater, loginSkater, updateSkater, deleteSkater, updateCheckbox }

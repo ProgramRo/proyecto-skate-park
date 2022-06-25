@@ -17,11 +17,11 @@
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Password</label>
-          <input class="form-control m-auto" name="password" />
+          <input type="password" class="form-control m-auto" name="password" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Repita la password</label>
-          <input class="form-control m-auto" />
+          <input type="password" class="form-control m-auto" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Años de experiencia</label>
@@ -36,8 +36,17 @@
           <input type="file" name="foto" />
         </div>
       </div>
-      <input type="submit" class="btn btn-info mb-3">Registrarme</input>
+      <input type="submit" class="btn btn-info mb-3" value="Registrarme"/>
       <p><a href="/Login"> Iniciar sesión</a></p>
     </form>
   </div>
   </body>
+
+<script>
+  const alertaMensaje = () => {
+    if('{{mensaje}}') {
+      alert('{{mensaje}}')
+    }
+  }
+  alertaMensaje()
+</script>

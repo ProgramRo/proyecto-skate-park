@@ -18,31 +18,66 @@
           </tr>
         </thead>
         <tbody>
+          {{#each datosSkaters}}
           <tr>
-            <th scope="row">1</th>
-            <td><div></div></td>
-            <td>Tony Hawk</td>
-            <td>12</td>
-            <td>Kickflip</td>
-            <td><input type="checkbox" checked /></td>
+            <th scope="row">{{@index}}</th>
+            <td><div style="background-image: url('/assets/img/{{foto}}');"></div></td>
+            <td>{{nombre}}</td>
+            <td>{{anos_experiencia}}</td>
+            <td>{{especialidad}}</td>
+            <td><input type="checkbox" 
+            {{#if estado}}
+            checked
+            {{/if}}
+            value="{{id}}"
+            /></td>
           </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td><div></div></td>
-            <td>Evelien Bouilliart</td>
-            <td>10</td>
-            <td>Heelflip</td>
-            <td><input type="checkbox" checked /></td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td><div></div></td>
-            <td>Danny Way</td>
-            <td>8</td>
-            <td>Ollie</td>
-            <td><input type="checkbox" /></td>
-          </tr>
+          {{/each}}
         </tbody>
       </table>
     </div>
   </body>
+
+  <script>
+    const alertaMensaje = () => {
+      if('{{mensaje}}') {
+        alert('{{mensaje}}')
+      }
+      const cambioEstado = async (inputCheckbox) => {
+        const data = { // Este data traerá el input completo de la checkbox
+          'estado': inputCheckbox.checked,
+          'id': inputCheckbox.value
+          }
+
+        const tokenActual = localStorage.getItem('token')
+      
+        await fetch('http://localhost:3000/checkbox', {
+          method: 'PUT',
+          headers: {
+            'Authorization': tokenActual,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }).then(response => {
+          response.json().then(async (dato) => {
+            if(dato.status) {
+              alert('Actualización coorecta de estado!')
+              window.location.replace('/admin')
+            } else {
+              alert('No se pudo actualizar el estado. Intente nuevamente.')
+              window.location.replace('/admin')
+            }
+          })
+        }).catch((err) => {
+          alert(`Ocurrió un error. Por favor, revise la siguiente información: ${err}`)
+          window.location.replace('/admin')
+        })
+      }
+
+      const allCheckbox = document.querySelectorAll('input[type=checkbox]')
+      allCheckbox.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {cambioEstado(checkbox)})
+      })
+    }
+    alertaMensaje()
+  </script>
